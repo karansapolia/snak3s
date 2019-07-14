@@ -38,8 +38,9 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    const canvas = this.canvasRef.current;
-    const context = canvas.getContext('2d');
+    this.canvas = this.canvasRef.current;
+    this.context = this.canvas.getContext('2d');
+    this.anim = requestAnimationFrame(this.startGame);
   }
 
   startGame() {
@@ -130,7 +131,11 @@ class App extends React.Component {
         }
       }
     });
-    requestAnimationFrame(this.startGame);
+    this.anim = requestAnimationFrame(this.startGame);
+  }
+
+  componentWillUnmount() {
+    cancelAnimationFrame(this.anim);
   }
 
   decideDirection(e) {
@@ -160,14 +165,21 @@ class App extends React.Component {
   }
 
   render() {
-    if(this.state.currentScreen === 'start') {
+    /*if(this.state.currentScreen === 'start') {
       return(
-        <Start 
-          startGame = {this.startGame}
-        />
+        <div>
+           <canvas
+            ref = {this.canvasRef}
+            width = {500}
+            height = {500}
+          />
+          <Start 
+            startGame = {this.startGame}
+          />
+        </div>
       );
-    }
-    if(this.state.currentScreen === 'playing') {
+    }*/
+    //if(this.state.currentScreen === 'playing') {
       return(
         <div 
           className="App"
@@ -183,14 +195,14 @@ class App extends React.Component {
           <h2>Current Score: </h2><ScoreCard score = {this.state.highestScore} />
         </div>
       );
-    }
-    if(this.state.currentScreen === 'stop') {
+    //}
+    /*if(this.state.currentScreen === 'stop') {
       return (
         <End
           currentScore = {this.currentScore}
         />
       );
-    }
+    }*/
   }
 }
 
