@@ -165,7 +165,7 @@ class App extends React.Component {
   }
 
   render() {
-    /*if(this.state.currentScreen === 'start') {
+    if(this.state.currentScreen === 'start') {
       return(
         <div>
            <canvas
@@ -178,8 +178,8 @@ class App extends React.Component {
           />
         </div>
       );
-    }*/
-    //if(this.state.currentScreen === 'playing') {
+    }
+    if(this.state.currentScreen === 'playing') {
       return(
         <div 
           className="App"
@@ -195,14 +195,14 @@ class App extends React.Component {
           <h2>Current Score: </h2><ScoreCard score = {this.state.highestScore} />
         </div>
       );
-    //}
-    /*if(this.state.currentScreen === 'stop') {
+    }
+    if(this.state.currentScreen === 'stop') {
       return (
         <End
           currentScore = {this.currentScore}
         />
       );
-    }*/
+    }
   }
 }
 
