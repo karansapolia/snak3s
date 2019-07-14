@@ -1,15 +1,18 @@
 import React from 'react';
 
-function Start(props) {
-    return (
-        <button
-            className = "start-button"
-            type = "button"
-            onClick = {props.startGame}
-        >
-            Play Snak3s!
-        </button>
-    )
+class Start extends React.Component {
+    render() {
+        return (
+            <button
+                className = "start-button"
+                type = "button"
+                onClick = {this.props.startGame}
+            >
+                Play Snak3s!
+            </button>
+        );
+
+    }
 }
 
 export default Start;

@@ -5,8 +5,9 @@ import Start from './Start';
 import ScoreCard from './ScoreCard';
 
 class App extends React.Component { 
-  constructor(props) {
-    super(props);
+  
+  constructor() {
+    super();
     this.state = {
       size: 500,
       currentScreen: 'start',
@@ -20,6 +21,8 @@ class App extends React.Component {
       },
       speed: 5
     }
+
+    this.startGame = this.startGame.bind(this);
   }
 
   randomNumberGen(min, max) {
@@ -27,8 +30,8 @@ class App extends React.Component {
   }
 
   startGame() {
-    this.setState({
-      currentScreen: 'playing'
+    this.setState((state) => {
+      return {currentScreen: 'playing'}
     });
   }
 
@@ -38,14 +41,14 @@ class App extends React.Component {
   }
 
   render() {
-    if(this.state.currentScreen === "start") {
+    if(this.state.currentScreen === 'start') {
       return(
         <Start 
           startGame = {this.startGame}
         />
       );
     }
-    else if(this.state.currentScreen === "playing") {
+    if(this.state.currentScreen === 'playing') {
       return(
         <div className="App">
           <canvas
@@ -55,7 +58,6 @@ class App extends React.Component {
           ></canvas>
           <ScoreCard score = {this.state.currentScore} />
           <ScoreCard score = {this.state.highestScore} />
-    
         </div>
       );
     }
