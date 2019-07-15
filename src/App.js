@@ -37,7 +37,13 @@ class App extends React.Component {
     return Math.floor(Math.random() * (max - min)) + min;
   }
 
-  componentDidMount() {
+  /*componentDidMount() {
+    this.canvas = this.canvasRef.current;
+    this.context = this.canvas.getContext('2d');
+    this.anim = requestAnimationFrame(this.startGame);
+  }*/
+
+  componentDidUpdate() {
     this.canvas = this.canvasRef.current;
     this.context = this.canvas.getContext('2d');
     this.anim = requestAnimationFrame(this.startGame);
@@ -55,7 +61,10 @@ class App extends React.Component {
     }
 
     this.iteration = 0;
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    if(this.context && this.canvas) {
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
 
     this.snakePosition.x += this.snakeSpeed.x;
     this.snakePosition.y += this.snakeSpeed.y;
@@ -168,14 +177,7 @@ class App extends React.Component {
     if(this.state.currentScreen === 'start') {
       return(
         <div>
-           <canvas
-            ref = {this.canvasRef}
-            width = {500}
-            height = {500}
-          />
-          <Start 
-            startGame = {this.startGame}
-          />
+          <Start startGame = {this.startGame} />
         </div>
       );
     }
@@ -184,7 +186,6 @@ class App extends React.Component {
         <div 
           className="App"
           onKeyDown = {this.decideDirection}  
-
         >
           <canvas
             ref = {this.canvasRef}
