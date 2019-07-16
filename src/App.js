@@ -6,8 +6,8 @@ import ScoreCard from './ScoreCard';
 
 class App extends React.Component { 
   
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       currentScreen: 'start',
       highestScore: 0,
@@ -26,8 +26,10 @@ class App extends React.Component {
       snakeSpeed: {
         x: 5,
         y: 0
-      }
-    }
+      },
+      canvasWidth: 500,
+      canvasHeight:500
+    };
 
     this.canvasRef = React.createRef();
     this.startGame = this.startGame.bind(this);
@@ -46,7 +48,7 @@ class App extends React.Component {
   componentDidUpdate() {
     this.canvas = this.canvasRef.current;
     this.context = this.canvas.getContext('2d');
-    this.anim = requestAnimationFrame(this.startGame);
+    requestAnimationFrame(this.startGame);
   }
 
   startGame() {
@@ -56,6 +58,8 @@ class App extends React.Component {
       return {currentScreen: 'playing'}
     });
 
+    console.log(this.state.snakePosition.x);
+
     if(++this.iteration < 4) {
       return;
     }
@@ -63,53 +67,100 @@ class App extends React.Component {
     this.iteration = 0;
     
     if(this.context && this.canvas) {
-      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.context.clearRect(0, 0, this.state.canvasWidth, this.state.canvasHeight);
     }
 
-    this.snakePosition.x += this.snakeSpeed.x;
-    this.snakePosition.y += this.snakeSpeed.y;
 
-    if(this.snakePosition.x < 0) {
-      this.snakePosition.x = this.canvas.width - this.snakeSpeed.x;
+    this.setState((state) => {
+      return {
+        snakePosition: {
+          x: state.snakePosition.x+state.snakeSpeed.x,
+          y: state.snakePosition.y+state.snakeSpeed.y
+        }
+      };
+    });
+
+    if(this.state.snakePosition.x < 0) {
+      this.setState((state) => {
+        return {
+          snakePosition: {
+            x: this.state.canvasWidth - state.snakeSpeed.x,
+            y: state.snakePosition.y
+          }
+        };
+      });
     }
-    else if(this.snakePosition.x >= this.canvas.width) {
-      this.snakePosition.x = 0;
+    else if(this.state.snakePosition.x >= this.state.canvasWidth) {
+      this.setState((state) => {
+        return {
+          snakePosition: {
+            x: 0,
+            y: state.snakePosition.y
+          }
+        };
+      });
     }
 
-    if(this.snakePosition.y < 0) {
-      this.snakePosition.y = this.canvas.height - this.snakeSpeed.x;
+    if(this.state.snakePosition.y < 0) {
+      this.setState((state) => {
+        return {
+          snakePosition: {
+            x: state.snakeSpeed.x,
+            y: state.canvasHeight - state.snakeSpeed.x
+          }
+        };
+      });
     }
-    else if(this.snakePosition.y >= this.canvas.height) {
-      this.snakePosition.y = 0;
+    else if(this.state.snakePosition.y >= this.state.canvasHeight) {
+      this.setState((state) => {
+        return {
+          snakePosition: {
+            x: state.snakeSpeed.x,
+            y: 0
+          }
+        };
+      });
     }
 
-    this.snakeBody.unshift({x: this.snakePosition.x, y: this.snakePosition.y});
+    this.setState((state) => {
+      return {
+        snakeBody: state.snakeBody.unshift({x: state.snakePosition.x, y: state.snakePosition.y})
+      };
+    });
 
-    if(this.snakeBody.length > this.snakeLength) {
-      this.snakeBody.pop();
+    if(this.state.snakeBody.length > this.state.snakeLength) {
+      this.setState((state) => {
+        return {
+          snakeBody: state.snakeBody.pop()
+        };
+      });
     }
 
     this.context.fillStyle = 'yellow';
-    this.context.fillRect(this.starPosition.x, this.starPosition.y, this.snakeSpeed.x - 1, this.snakeSpeed.x - 1);
+    this.context.fillRect(this.state.starPosition.x, this.state.starPosition.y, this.state.snakeSpeed.x - 1, this.state.snakeSpeed.x - 1);
 
     console.log("First print done!");
 
     this.context.fillStyle = 'green';
-    this.snakeBody.forEach(function(cell, index) {
-      this.context.fillRect(cell.x, cell.y, this.snakeSpeed.x - 1, this.snakeSpeed.x - 1);
+    this.state.snakeBody.forEach(function(cell, index) {
+      this.context.fillRect(cell.x, cell.y, this.state.snakeSpeed.x - 1, this.state.snakeSpeed.x - 1);
 
-      if(cell.x === this.starPosition.x && cell.y === this.starPosition.y) {
-        this.snakeLength++;
+      if(cell.x === this.state.starPosition.x && cell.y === this.state.starPosition.y) {
         this.setState((state) => {
-          return {currentScore: (state.currentScore + 10)}
+          return {
+            snakeLength: state.snakeLength+1,
+            currentScore: (state.currentScore + 10),
+            starPosition: {
+              x: this.randomNumberGen(0, 100) * state.snakeSpeed.x,
+              y: this.randomNumberGen(0, 100) * state.snakeSpeed.x
+            }
+          };
         });
-        this.starPosition.x = this.randomNumberGen(0, 100) * this.snakeSpeed.x;
-        this.starPosition.y = this.randomNumberGen(0, 100) * this.snakeSpeed.x;
       }
 
-      for (var i = index + 1; i < this.snakeBody.length; i++) {
-        if (cell.x === this.snakeBody[i].x && cell.y === this.snakeBody[i].y) {
-          if(this.highScore < this.currentScore) {
+      for (var i = index + 1; i < this.state.snakeBody.length; i++) {
+        if (cell.x === this.state.snakeBody[i].x && cell.y === this.state.snakeBody[i].y) {
+          if(this.state.highScore < this.state.currentScore) {
             this.setState((state) => {
               return {highScore: state.currentScore}
             });
@@ -140,12 +191,12 @@ class App extends React.Component {
         }
       }
     });
-    this.anim = requestAnimationFrame(this.startGame);
+  this.anim = requestAnimationFrame(this.startGame);
   }
 
-  componentWillUnmount() {
+  /*componentWillUnmount() {
     cancelAnimationFrame(this.anim);
-  }
+  }*/
 
   decideDirection(e) {
     console.log(e);
